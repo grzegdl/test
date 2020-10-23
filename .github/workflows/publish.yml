@@ -5,6 +5,7 @@ on:
       - master
       - develop
       - sandbox
+  workflow_dispatch:
 env:
   GITHUB_SHA: ${{ github.sha }}
   GITHUB_BRANCH: ${{ github.ref }}
