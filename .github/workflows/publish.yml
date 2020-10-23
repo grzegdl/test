@@ -12,6 +12,7 @@ env:
   GITHUB_REPOSIOTORY: ${{ github.repository }}
 jobs:
   publish:
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
