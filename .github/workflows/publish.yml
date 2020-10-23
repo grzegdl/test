@@ -1,0 +1,32 @@
+name: publish
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - sandbox
+env:
+  GITHUB_SHA: ${{ github.sha }}
+  GITHUB_BRANCH: ${{ github.ref }}
+  GITHUB_REPOSIOTORY: ${{ github.repository }}
+jobs:
+  publish:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build image
+        run: |
+          [ $GITHUB_BRANCH == "refs/heads/master" ] && PREFIX=staging || PREFIX=staging
+          IMAGE_TAG=$PREFIX-$(echo $GITHUB_SHA | cut -c 1-7)
+          IMAGE_NAME=$(echo $GITHUB_REPOSIOTORY | cut -c 10-)
+          PROJECT_NAME=gcr.io/chess-gcr1
+
+          echo "branch: $GITHUB_BRANCH, building image... $PROJECT_NAME/$IMAGE_NAME:$IMAGE_TAG"
+          docker build -t $PROJECT_NAME/$IMAGE_NAME:$IMAGE_TAG .
+
+         # if [ $GITHUB_BRANCH == "refs/heads/master" ] ; then
+         #    echo "pushing image... $PROJECT_NAME/$IMAGE_NAME:latest"
+         #    docker tag $PROJECT_NAME/$IMAGE_NAME:$IMAGE_TAG $PROJECT_NAME/$IMAGE_NAME:latest
+         #    docker push $PROJECT_NAME/$IMAGE_NAME:latest
+         # fi
